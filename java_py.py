@@ -63,10 +63,44 @@ def check_keyword(str,stack):
     else:
         new_object(str.lstrip(),level,stack)
 
+def append_stack(parent, data, level, stack):
+    key_name = data
+    value = {}
+    parent[key_name] = value
+    stack.append({level:parent})
+
+def create_map(str,stack):
+    level = len(str)-len(str.lstrip())
+    keyword = str.lstrip()
+    if(not keyword.startswith("b'")):
+        if(keyword.startswith("{")):
+            data = keyword
+            set_to_value_of_root(data,stack)
+        else:
+            if(len(stack)>0):
+                data = stack.pop()
+                key_name = list(data.keys())[0]
+                value = data[key_name]
+                append_stack(value,keyword,level,stack)
+            else:
+                key_name = keyword
+                value = {}
+                stack.append({level:{key_name:value}})
+
+def change_map_to_dict(object,stack):
+    if(len(object) > 1):
+        create_map(object[0],stack)
+        change_map_to_dict(object[1:],stack)
+    
+
 def change_to_dict(object,stack=[]):
     if(len(object) < 1):
         data = list(stack.pop().values())[0]
         return data
+    if(object[0].startswith("java.util.HashMap")):
+        data = object[0].split(" ")
+        change_map_to_dict(object[1:int(data[2])+1],stack)
+        return change_to_dict(object[int(data[2])+1:],stack)
     check_keyword(object[0],stack)    
     return change_to_dict(object[1:],stack)
 
