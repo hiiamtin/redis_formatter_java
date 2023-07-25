@@ -104,8 +104,11 @@ def change_to_dict(object,stack=[]):
     check_keyword(object[0],stack)    
     return change_to_dict(object[1:],stack)
 
-key = {}
-stack = []
-string_array = ob.split("\n")
-result = change_to_dict(string_array)
-print(json.dumps(result,indent=4))
+try:
+    key = {}
+    stack = []
+    string_array = ob.split("\n")
+    result = change_to_dict(string_array)
+    print(json.dumps(result,indent=4))
+except Exception as e:
+    print(ob)
